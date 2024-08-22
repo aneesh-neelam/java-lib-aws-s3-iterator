@@ -57,6 +57,7 @@ public class S3ObjectIteratorContainerTest {
     private AmazonS3 amazonS3;
     private S3Client s3Client;
     private S3AsyncClient s3AsyncClient;
+    private S3AsyncClient s3AsyncCrtClient;
 
     @BeforeAll
     public static void beforeAll() {
@@ -81,6 +82,11 @@ public class S3ObjectIteratorContainerTest {
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKey, awsSecretKey)))
                 .build();
         this.s3AsyncClient = S3AsyncClient.builder()
+                .endpointOverride(awsS3Uri)
+                .region(Region.of(awsRegion))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKey, awsSecretKey)))
+                .build();
+        this.s3AsyncCrtClient = S3AsyncClient.crtBuilder()
                 .endpointOverride(awsS3Uri)
                 .region(Region.of(awsRegion))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKey, awsSecretKey)))
@@ -130,6 +136,19 @@ public class S3ObjectIteratorContainerTest {
                 .prefix(s3KeyPrefix)
                 .build();
         AsyncS3ObjectIterator asyncS3ObjectIterator = new AsyncS3ObjectIterator(this.s3AsyncClient, listObjectsV2Request, Duration.ofSeconds(30));
+        long count = StreamSupport.stream(Spliterators.spliteratorUnknownSize(asyncS3ObjectIterator, Spliterator.ORDERED), false)
+                .count();
+        Assertions.assertEquals(s3ObjectCount, count);
+    }
+
+    @Test
+    public void testS3ObjectIteratorAsyncCrt() {
+        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName());
+        ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
+                .bucket(s3BucketName)
+                .prefix(s3KeyPrefix)
+                .build();
+        AsyncS3ObjectIterator asyncS3ObjectIterator = new AsyncS3ObjectIterator(this.s3AsyncCrtClient, listObjectsV2Request, Duration.ofSeconds(30));
         long count = StreamSupport.stream(Spliterators.spliteratorUnknownSize(asyncS3ObjectIterator, Spliterator.ORDERED), false)
                 .count();
         Assertions.assertEquals(s3ObjectCount, count);

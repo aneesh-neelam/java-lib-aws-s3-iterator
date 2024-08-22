@@ -8,6 +8,7 @@ ext {
     monoReactorVersion = '3.6.9'
     aws1SdkVersion = '1.12.770'
     aws2SdkVersion = '2.27.9'
+    awsCrtSdkVersion = '0.30.8'
     junitJupiterVersion = '5.11.0'
     testContainersVersion = '1.20.1'
 }
@@ -54,6 +55,7 @@ dependencies {
 
     // AWS SDK v2 for running Tests
     testImplementation group: 'software.amazon.awssdk', name: 's3', version: aws2SdkVersion
+    testImplementation group: 'software.amazon.awssdk.crt', name: 'aws-crt', version: awsCrtSdkVersion
 }
 
 test {
