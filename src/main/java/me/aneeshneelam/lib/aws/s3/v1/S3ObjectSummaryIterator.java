@@ -16,22 +16,26 @@ public class S3ObjectSummaryIterator implements Iterator<S3ObjectSummary> {
     private ListObjectsV2Result listObjectsV2Result;
     private Iterator<S3ObjectSummary> s3ObjectSummaryIterator;
 
-    public S3ObjectSummaryIterator(AmazonS3 amazonS3, ListObjectsV2Request listObjectsV2Request) {
+    public S3ObjectSummaryIterator(AmazonS3 amazonS3,
+                                   ListObjectsV2Request listObjectsV2Request) {
+
         this.amazonS3 = amazonS3;
         this.listObjectsV2Request = listObjectsV2Request;
     }
 
     private void checkListObjectsV2ResponseState() {
         if (this.s3ObjectSummaryIterator != null) {
-            if (this.listObjectsV2Result.isTruncated()) {
+            if (!this.s3ObjectSummaryIterator.hasNext() && this.listObjectsV2Result.isTruncated()) {
                 ListObjectsV2Request listObjectsV2ContinuationRequest = ((ListObjectsV2Request) this.listObjectsV2Request.clone())
-                        .withContinuationToken(this.listObjectsV2Result.getContinuationToken());
+                        .withContinuationToken(this.listObjectsV2Result.getNextContinuationToken());
                 this.listObjectsV2Result = this.amazonS3.listObjectsV2(listObjectsV2ContinuationRequest);
                 this.s3ObjectSummaryIterator = this.listObjectsV2Result.getObjectSummaries()
-                        .listIterator();
+                        .iterator();
             }
         } else {
             this.listObjectsV2Result = this.amazonS3.listObjectsV2(this.listObjectsV2Request);
+            this.s3ObjectSummaryIterator = this.listObjectsV2Result.getObjectSummaries()
+                    .iterator();
         }
     }
 

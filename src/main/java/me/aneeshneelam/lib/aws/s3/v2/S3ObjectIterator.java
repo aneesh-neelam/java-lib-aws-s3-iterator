@@ -16,25 +16,28 @@ public class S3ObjectIterator implements Iterator<S3Object> {
     private ListObjectsV2Response listObjectsV2Response;
     private Iterator<S3Object> s3ObjectIterator;
 
-    public S3ObjectIterator(S3Client s3Client, ListObjectsV2Request listObjectsV2Request) {
+    public S3ObjectIterator(S3Client s3Client,
+                            ListObjectsV2Request listObjectsV2Request) {
+
         this.s3Client = s3Client;
         this.listObjectsV2Request = listObjectsV2Request;
     }
 
     private void checkListObjectsV2ResponseState() {
         if (this.s3ObjectIterator != null) {
-            if (this.s3ObjectIterator.hasNext()) {
-                return;
-            } else if (this.listObjectsV2Response.isTruncated()) {
+            if (!this.s3ObjectIterator.hasNext() && this.listObjectsV2Response.isTruncated()) {
                 ListObjectsV2Request listObjectsV2ContinuationRequest = this.listObjectsV2Request.toBuilder()
                         .continuationToken(this.listObjectsV2Response.nextContinuationToken())
                         .build();
+
                 this.listObjectsV2Response = this.s3Client.listObjectsV2(listObjectsV2ContinuationRequest);
                 this.s3ObjectIterator = this.listObjectsV2Response.contents()
                         .iterator();
             }
         } else {
             this.listObjectsV2Response = this.s3Client.listObjectsV2(this.listObjectsV2Request);
+            this.s3ObjectIterator = this.listObjectsV2Response.contents()
+                    .iterator();
         }
     }
 

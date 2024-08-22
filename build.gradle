@@ -30,9 +30,6 @@ dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-    // Mono Reactor
-    compileOnly group: 'io.projectreactor', name: 'reactor-core', version: monoReactorVersion
-
     // AWS SDK v1
     compileOnly group: 'com.amazonaws', name: 'aws-java-sdk', version: aws1SdkVersion
 
@@ -49,10 +46,8 @@ dependencies {
 
     // Testcontainers
     testImplementation platform(group: 'org.testcontainers', name: 'testcontainers-bom', version: testContainersVersion)
+    testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: testContainersVersion
     testImplementation group: 'org.testcontainers', name: 'localstack', version: testContainersVersion
-
-    // Mono Reactor for running Tests
-    testImplementation group: 'io.projectreactor', name: 'reactor-core', version: monoReactorVersion
 
     // AWS SDK v1 for running Tests
     testImplementation group: 'com.amazonaws', name: 'aws-java-sdk', version: aws1SdkVersion
