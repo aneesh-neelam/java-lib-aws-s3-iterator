@@ -35,7 +35,7 @@ import java.util.stream.StreamSupport;
 
 @Execution(ExecutionMode.CONCURRENT)
 @Testcontainers(disabledWithoutDocker = true, parallel = true)
-public class S3ObjectIteratorContainerTest {
+public class S3ListObjectsIteratorContainerTest {
     private static final long s3ObjectCount = 3000;
     private static final String s3BucketName = "aneesh-test-bucket";
     private static final String s3KeyPrefix = "files/";
