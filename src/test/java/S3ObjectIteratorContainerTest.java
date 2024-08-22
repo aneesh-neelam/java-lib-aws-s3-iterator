@@ -33,7 +33,7 @@ import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
 
 
-@Execution(ExecutionMode.SAME_THREAD)
+@Execution(ExecutionMode.CONCURRENT)
 @Testcontainers(disabledWithoutDocker = true, parallel = true)
 public class S3ObjectIteratorContainerTest {
     private static final long s3ObjectCount = 3000;
