@@ -117,7 +117,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectIterator() {
-        System.out.println("Testing: " + S3ObjectIterator.class.getCanonicalName());
+        System.out.println("Testing: " + S3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3Client.getClass().getCanonicalName());
         ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
                 .bucket(s3BucketName)
                 .prefix(s3KeyPrefix)
@@ -130,7 +130,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectIteratorAsync() {
-        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName());
+        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3AsyncClient.getClass().getCanonicalName());
         ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
                 .bucket(s3BucketName)
                 .prefix(s3KeyPrefix)
@@ -143,7 +143,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectIteratorAsyncCrt() {
-        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName());
+        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3AsyncCrtClient.getClass().getCanonicalName());
         ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
                 .bucket(s3BucketName)
                 .prefix(s3KeyPrefix)
@@ -156,7 +156,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectSummaryIterator() {
-        System.out.println("Testing: " + S3ObjectSummaryIterator.class.getCanonicalName());
+        System.out.println("Testing: " + S3ObjectSummaryIterator.class.getCanonicalName()+ " with SDK: " + this.amazonS3.getClass().getCanonicalName());
         com.amazonaws.services.s3.model.ListObjectsV2Request listObjectsV2Request = new com.amazonaws.services.s3.model.ListObjectsV2Request()
                 .withBucketName(s3BucketName)
                 .withPrefix(s3KeyPrefix);
