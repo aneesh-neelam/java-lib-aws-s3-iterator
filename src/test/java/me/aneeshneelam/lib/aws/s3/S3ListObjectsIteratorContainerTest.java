@@ -1,8 +1,11 @@
+package me.aneeshneelam.lib.aws.s3;
+
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import lombok.extern.java.Log;
 import me.aneeshneelam.lib.aws.s3.v1.S3ObjectSummaryIterator;
 import me.aneeshneelam.lib.aws.s3.v2.AsyncS3ObjectIterator;
 import me.aneeshneelam.lib.aws.s3.v2.S3ObjectIterator;
@@ -32,7 +35,7 @@ import java.util.Spliterators;
 import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
 
-
+@Log
 @Execution(ExecutionMode.CONCURRENT)
 @Testcontainers(disabledWithoutDocker = true, parallel = true)
 public class S3ListObjectsIteratorContainerTest {
@@ -94,12 +97,12 @@ public class S3ListObjectsIteratorContainerTest {
 
         if (createS3Bucket) {
             CreateBucketResponse response = this.s3Client.createBucket(r -> r.bucket(s3BucketName));
-            System.out.println("Created S3 Bucket, Response: " + response.toString());
+            log.info("Created S3 Bucket, Response: " + response.toString());
             createS3Bucket = false;
         }
 
         if (loadS3Objects) {
-            System.out.println("Uploading " + s3ObjectCount + " S3 Objects to Bucket: " + s3BucketName);
+            log.info("Uploading " + s3ObjectCount + " S3 Objects to Bucket: " + s3BucketName);
             LongStream.rangeClosed(1L, s3ObjectCount).forEach(i -> {
                 String key = s3KeyPrefix + String.format(fileNameFormat, i);
                 String content = String.format(fileContentFormat, i);
@@ -108,16 +111,16 @@ public class S3ListObjectsIteratorContainerTest {
                         .key(key)
                         .build();
                 PutObjectResponse response = this.s3Client.putObject(request, RequestBody.fromString(content, StandardCharsets.UTF_8));
-                System.out.println("Uploaded S3 Object to Bucket: " + s3BucketName + ", Key: " + key + ", Content: " + content + ", Response: " + response.toString());
+                log.info("Uploaded S3 Object to Bucket: " + s3BucketName + ", Key: " + key + ", Content: " + content + ", Response: " + response.toString());
             });
             loadS3Objects = false;
-            System.out.println("Uploaded " + s3ObjectCount + " S3 Objects to Bucket: " + s3BucketName);
+            log.info("Uploaded " + s3ObjectCount + " S3 Objects to Bucket: " + s3BucketName);
         }
     }
 
     @Test
     public void testS3ObjectIterator() {
-        System.out.println("Testing: " + S3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3Client.getClass().getCanonicalName());
+        log.info("Testing: " + S3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3Client.getClass().getCanonicalName());
         ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
                 .bucket(s3BucketName)
                 .prefix(s3KeyPrefix)
@@ -130,7 +133,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectIteratorAsync() {
-        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3AsyncClient.getClass().getCanonicalName());
+        log.info("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3AsyncClient.getClass().getCanonicalName());
         ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
                 .bucket(s3BucketName)
                 .prefix(s3KeyPrefix)
@@ -143,7 +146,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectIteratorAsyncCrt() {
-        System.out.println("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3AsyncCrtClient.getClass().getCanonicalName());
+        log.info("Testing: " + AsyncS3ObjectIterator.class.getCanonicalName() + " with SDK: " + this.s3AsyncCrtClient.getClass().getCanonicalName());
         ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
                 .bucket(s3BucketName)
                 .prefix(s3KeyPrefix)
@@ -156,7 +159,7 @@ public class S3ListObjectsIteratorContainerTest {
 
     @Test
     public void testS3ObjectSummaryIterator() {
-        System.out.println("Testing: " + S3ObjectSummaryIterator.class.getCanonicalName()+ " with SDK: " + this.amazonS3.getClass().getCanonicalName());
+        log.info("Testing: " + S3ObjectSummaryIterator.class.getCanonicalName()+ " with SDK: " + this.amazonS3.getClass().getCanonicalName());
         com.amazonaws.services.s3.model.ListObjectsV2Request listObjectsV2Request = new com.amazonaws.services.s3.model.ListObjectsV2Request()
                 .withBucketName(s3BucketName)
                 .withPrefix(s3KeyPrefix);
