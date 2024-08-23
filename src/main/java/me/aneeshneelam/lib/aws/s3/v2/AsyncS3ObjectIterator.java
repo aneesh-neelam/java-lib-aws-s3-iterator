@@ -62,21 +62,21 @@ public class AsyncS3ObjectIterator implements Iterator<S3Object> {
 
     @Override
     public boolean hasNext() {
-        try {
-            return this.checkListObjectsV2ResponseState()
-                    .thenApply(aVoid -> this.s3ObjectIterator.hasNext())
-                    .get(requestTimeoutDuration.getSeconds(), TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+        CompletableFuture<Boolean> booleanCompletableFuture = this.checkListObjectsV2ResponseState()
+                .thenApply(aVoid -> this.s3ObjectIterator.hasNext());
+        return this.completableFutureGet(booleanCompletableFuture);
     }
 
     @Override
     public S3Object next() {
+        CompletableFuture<S3Object> s3ObjectCompletableFuture = this.checkListObjectsV2ResponseState()
+                .thenApply(aVoid -> this.s3ObjectIterator.next());
+        return this.completableFutureGet(s3ObjectCompletableFuture);
+    }
+
+    private <T> T completableFutureGet(CompletableFuture<T> completableFuture) {
         try {
-            return this.checkListObjectsV2ResponseState()
-                    .thenApply(aVoid -> this.s3ObjectIterator.next())
-                    .get(requestTimeoutDuration.getSeconds(), TimeUnit.SECONDS);
+            return completableFuture.get(this.requestTimeoutDuration.getSeconds(), TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
         }
